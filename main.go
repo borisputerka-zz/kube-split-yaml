@@ -1,40 +1,46 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strings"
 
 	"github.com/borisputerka/kube-split-yaml/pkg"
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 var (
-	suffix string
+	suffix    string
+	inputData []byte
+	err       error
+
+	outputDir = kingpin.Flag(
+		"output-dir",
+		"Directory to write split files.",
+	).Default("split_yaml").String()
+
+	input = kingpin.Flag(
+		"input",
+		"Input file with kube manifests.",
+	).String()
 )
 
 func main() {
-	if strings.HasSuffix(os.Args[1], ".yaml") {
-		suffix = ".yaml"
-	} else if strings.HasSuffix(os.Args[1], ".yaml") {
-		suffix = ".yml"
+	if *input != "" {
+		inputData, err = ioutil.ReadFile(*input)
+		if err != nil {
+			fmt.Errorf("failed to read input file: %v", err)
+		}
 	} else {
-		fmt.Errorf("missing a yaml/yml suffix")
+		scanner := bufio.NewScanner(os.Stdin)
+		if !scanner.Scan() {
+			fmt.Errorf("failed to read stdin: %v", scanner.Err())
+		}
+		inputData = scanner.Bytes()
 	}
 
-	inputData, err := ioutil.ReadFile(os.Args[1])
-	if err != nil {
-		fmt.Errorf("failed to read input file: %v", err)
-	}
-
-	filePathSplit := strings.Split(os.Args[1], "/")
-	dirName := strings.TrimSuffix(filePathSplit[len(filePathSplit)-1], suffix)
-	err = os.Mkdir(dirName, 0751)
-	if err != nil {
-		fmt.Errorf("create directory: %v", err)
-	}
-
-	err = pkg.SplitYaml(string(inputData), dirName)
+	err = pkg.SplitYaml(string(inputData), *outputDir)
 	if err != nil {
 		fmt.Errorf("error: %v", err)
 	}

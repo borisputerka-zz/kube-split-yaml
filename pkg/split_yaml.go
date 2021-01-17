@@ -3,28 +3,33 @@ package pkg
 import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+	"os"
 	"strings"
 )
 
 const (
-yamlSplitter = "---"
+	yamlSplitter = "---"
 )
 
 type manifestCore struct {
-ApiVersion string   `yaml:"apiVersion"`
-Kind       string   `yaml:"kind"`
-Metadata   metadata `yaml:"metadata"`
+	ApiVersion string   `yaml:"apiVersion"`
+	Kind       string   `yaml:"kind"`
+	Metadata   metadata `yaml:"metadata"`
 }
 
 type metadata struct {
-Name      string `yaml:"name"`
-Namespace string `yaml:"namespace"`
+	Name      string `yaml:"name"`
+	Namespace string `yaml:"namespace"`
 }
 
 func SplitYaml(inputData string, dirName string) error {
-	for _, document := range strings.Split(string(inputData), yamlSplitter) {
+	err := os.Mkdir(dirName, 0751)
+	if err != nil {
+		return err
+	}
+	for _, document := range strings.Split(inputData, yamlSplitter) {
 		var manifest manifestCore
-		err := yaml.Unmarshal([]byte(document), &manifest)
+		err = yaml.Unmarshal([]byte(document), &manifest)
 		if err != nil {
 			return err
 		}
