@@ -1,5 +1,5 @@
 # kube-split-yaml
-Simple tool to split one file with kubernetes manifests into smaller ones.
+Simple tool to split one file with kubernetes manifests into separated ones.
 
 # Use cases
 Useful when you are using [kustomize](https://kustomize.io) and you want to evaluate generated manifests after `kustomoze build .` with [OPA](https://www.openpolicyagent.org).
