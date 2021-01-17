@@ -10,12 +10,13 @@ Useful when you are using [kustomize](https://kustomize.io) and you want to eval
 
 # Installation and usage
 1. Install
-
+	```
 	$ got get -v  github.com/borisputerka/kube-split-yaml
-
+	```
 2. Use plugin
-
+	```
 	$ kube-split-yaml --input <input_file> --outpud-dir <output_dir>
+	```
 
 # Flags reference
 Flag         | Description                                        | Default
