@@ -30,7 +30,6 @@ var (
 func main() {
 	kingpin.Parse()
 	if *input != "" {
-		fmt.Println("som tu")
 		inputData, err = ioutil.ReadFile(*input)
 		if err != nil {
 			fmt.Errorf("failed to read input file: %v", err)
