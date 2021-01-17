@@ -14,6 +14,7 @@ var (
 	suffix    string
 	inputData []byte
 	err       error
+	newLine = []byte("\n")
 
 	outputDir = kingpin.Flag(
 		"output-dir",
@@ -27,7 +28,9 @@ var (
 )
 
 func main() {
+	kingpin.Parse()
 	if *input != "" {
+		fmt.Println("som tu")
 		inputData, err = ioutil.ReadFile(*input)
 		if err != nil {
 			fmt.Errorf("failed to read input file: %v", err)
@@ -37,7 +40,10 @@ func main() {
 		if !scanner.Scan() {
 			fmt.Errorf("failed to read stdin: %v", scanner.Err())
 		}
-		inputData = scanner.Bytes()
+		for scanner.Scan() {
+			inputData = append(inputData, scanner.Text()...)
+			inputData = append(inputData, newLine...)
+		}
 	}
 
 	err = pkg.SplitYaml(string(inputData), *outputDir)
