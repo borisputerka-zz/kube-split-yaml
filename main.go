@@ -14,7 +14,7 @@ var (
 	suffix    string
 	inputData []byte
 	err       error
-	newLine = []byte("\n")
+	newLine   = []byte("\n")
 
 	outputDir = kingpin.Flag(
 		"output-dir",
@@ -33,7 +33,7 @@ func main() {
 		inputData, err = ioutil.ReadFile(*input)
 		if err != nil {
 			log.Fatal(err)
-    	}
+		}
 
 	} else {
 		scanner := bufio.NewScanner(os.Stdin)
