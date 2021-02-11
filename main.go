@@ -2,8 +2,8 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 
 	"github.com/borisputerka/kube-split-yaml/pkg"
@@ -32,12 +32,13 @@ func main() {
 	if *input != "" {
 		inputData, err = ioutil.ReadFile(*input)
 		if err != nil {
-			fmt.Errorf("failed to read input file: %v", err)
-		}
+			log.Fatal(err)
+    	}
+
 	} else {
 		scanner := bufio.NewScanner(os.Stdin)
 		if !scanner.Scan() {
-			fmt.Errorf("failed to read stdin: %v", scanner.Err())
+			log.Fatal("err: couldn't scan stdin")
 		}
 		for scanner.Scan() {
 			inputData = append(inputData, scanner.Text()...)
@@ -47,7 +48,7 @@ func main() {
 
 	err = pkg.SplitYaml(string(inputData), *outputDir)
 	if err != nil {
-		fmt.Errorf("error: %v", err)
+		log.Fatal(err)
 	}
 
 }
