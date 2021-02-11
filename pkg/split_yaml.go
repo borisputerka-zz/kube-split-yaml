@@ -1,6 +1,7 @@
 package pkg
 
 import (
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
@@ -8,7 +9,7 @@ import (
 )
 
 const (
-	yamlSplitter = "---"
+	yamlSplitter = "---\n"
 )
 
 type manifestCore struct {
@@ -23,10 +24,14 @@ type metadata struct {
 }
 
 func SplitYaml(inputData string, dirName string) error {
-	err := os.Mkdir(dirName, 0751)
-	if err != nil {
-		return err
+	_, err := os.Stat(dirName)
+	if os.IsNotExist(err) {
+		err := os.Mkdir(dirName, 0751)
+		if err != nil {
+			return err
+		}
 	}
+
 	for _, document := range strings.Split(inputData, yamlSplitter) {
 		var manifest manifestCore
 		err = yaml.Unmarshal([]byte(document), &manifest)
