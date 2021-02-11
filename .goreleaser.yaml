@@ -1,0 +1,44 @@
+project_name: kube-split-yaml
+release:
+  github:
+    owner: borisputerka
+    name: kube-split-yaml
+builds:
+  - id: kube-split-yaml
+    goos:
+    - linux
+    - windows
+    - darwin
+    goarch:
+    - amd64
+    - "386"
+    env:
+      - CGO_ENABLED=0
+      - GO111MODULE=on
+    main: main.go
+    ldflags: -s -w
+      -X github.com/borisputerka/kube-split-yaml/pkg/version.version={{.Version}}
+      -X github.com/borisputerka/kube-split-yaml/pkg/version.gitSHA={{.Commit}}
+      -X github.com/borisputerka/kube-split-yaml/pkg/version.buildTime={{.Date}}
+      -extldflags "-static"
+    flags: -tags netgo -installsuffix netgo
+    binary: kube-split-yaml
+    hooks: {}
+archives:
+  - id: kube-split-yaml
+    builds:
+      - kube-split-yaml
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: "{{ .Binary }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - licence*
+      - LICENCE*
+      - license*
+      - LICENSE*
+      - readme*
+      - README*
+      - changelog*
+      - CHANGELOG*
