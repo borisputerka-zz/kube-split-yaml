@@ -1,10 +1,20 @@
 package pkg
 
 import (
+	"gopkg.in/alecthomas/kingpin.v2"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
 	"strings"
+
+	"github.com/iancoleman/strcase"
+)
+
+var (
+	groupByKind = kingpin.Flag(
+		"group-by-kind",
+		"Group resources with same Kind into one file",
+	).Bool()
 )
 
 const (
@@ -38,21 +48,37 @@ func SplitYaml(inputData string, dirName string) error {
 			return err
 		}
 
-		manifest.ApiVersion = strings.ReplaceAll(manifest.ApiVersion, "/", ".")
 		var fileName string
-		if manifest.Metadata.Namespace == "" {
-			fileName = strings.Join(
-				[]string{manifest.Kind, manifest.ApiVersion, manifest.Metadata.Name + ".yaml"},
-				"-")
+		if *groupByKind {
+			fileName = strcase.ToKebab(manifest.Kind) + ".yaml"
+			f, err := os.OpenFile(dirName+"/"+fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+			if err != nil {
+				return err
+			}
+			_, err = f.Write([]byte(yamlSplitter + document))
+			if err != nil {
+				return err
+			}
+			err = f.Close()
+			if err != nil {
+				return err
+			}
 		} else {
-			fileName = strings.Join(
-				[]string{manifest.Kind, manifest.ApiVersion, manifest.Metadata.Namespace, manifest.Metadata.Name + ".yaml"},
-				"-")
-		}
+			apiVersionDotted := strings.ReplaceAll(manifest.ApiVersion, "/", ".")
+			if manifest.Metadata.Namespace == "" {
+				fileName = strings.Join(
+					[]string{manifest.Kind, apiVersionDotted, manifest.Metadata.Name + ".yaml"},
+					"-")
+			} else {
+				fileName = strings.Join(
+					[]string{manifest.Kind, apiVersionDotted, manifest.Metadata.Namespace, manifest.Metadata.Name + ".yaml"},
+					"-")
+			}
 
-		err = ioutil.WriteFile(dirName+"/"+fileName, []byte(document), 0644)
-		if err != nil {
-			return err
+			err = ioutil.WriteFile(dirName+"/"+fileName, []byte(document), 0644)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
