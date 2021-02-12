@@ -17,9 +17,9 @@ builds:
       - GO111MODULE=on
     main: main.go
     ldflags: -s -w
-      -X github.com/borisputerka/kube-split-yaml/pkg/version.version={{.Version}}
-      -X github.com/borisputerka/kube-split-yaml/pkg/version.gitSHA={{.Commit}}
-      -X github.com/borisputerka/kube-split-yaml/pkg/version.buildTime={{.Date}}
+      -X github.com/borisputerka/kube-split-yaml/main.version={{.Version}}
+      -X github.com/borisputerka/kube-split-yaml/main.gitSHA={{.Commit}}
+      -X github.com/borisputerka/kube-split-yaml/main.buildTime={{.Date}}
       -extldflags "-static"
     flags: -tags netgo -installsuffix netgo
     binary: kube-split-yaml
