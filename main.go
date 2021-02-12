@@ -26,6 +26,11 @@ var (
 		"Input file with kube manifests.",
 	).String()
 
+	splitCommand = kingpin.Command(
+		"split",
+		"Splits one kubernetes yaml file with multiple resources into separated files",
+	)
+
 	versionCommand = kingpin.Command(
 		"version",
 		"Display version and git commit of this binary",
